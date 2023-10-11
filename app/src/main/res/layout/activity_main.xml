@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/ssid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SSID:"
+        android:textSize="15dp"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/bssid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BSSID:"
+        android:textSize="15dp"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/signal_strength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Signal Strength:"
+        android:textSize="15dp"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/security_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Security Type:"
+        android:textSize="15dp"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/proxy_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Proxy Details:"
+        android:textSize="15dp"
+        android:layout_margin="10dp"/>
+
+</LinearLayout>
