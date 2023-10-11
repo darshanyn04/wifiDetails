@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                     // Permission granted, proceed with your code
                     getWiFiDetails();
                 } else {
-                    // Permission denied, handle accordingly (show a message, disable features, etc.)
+//                  need to write diffrent Logic
                 }
                 return;
             }
