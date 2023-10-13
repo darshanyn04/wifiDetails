@@ -2,32 +2,47 @@ package com.wifidetails;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.ProxyInfo;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSIONS_REQUEST_LOCATION = 1000;
     private static final String TODO = "Open";
+    private TextView rootStatusTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        rootStatusTextView = findViewById(R.id.root_status);
+        boolean hasRoot = hasRootAccess();
+        rootStatusTextView.setText("Root access: " + (hasRoot ? "Yes" : "No"));
+
 
         // Check and request location permission if not granted
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -36,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
             // Permission is already granted, proceed with your code
             getWiFiDetails();
         }
+//        askForProxySettings();
     }
 
     private void getWiFiDetails() {
@@ -68,6 +84,21 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    private boolean hasRootAccess() {
+        Process process;
+        try {
+            process = Runtime.getRuntime().exec("su");
+            DataOutputStream outputStream = new DataOutputStream(process.getOutputStream());
+            outputStream.writeBytes("exit\n");
+            outputStream.flush();
+            int exitValue = process.waitFor();
+            return (exitValue == 0);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     private WifiInfo getWifiInfo(Context context) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
@@ -142,4 +173,65 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+//    private void askForProxySettings() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("Proxy Settings");
+//
+//        final EditText inputHost = new EditText(this);
+//        inputHost.setHint("Host");
+//        final EditText inputPort = new EditText(this);
+//        inputPort.setHint("Port");
+//
+//        builder.setView(inputHost);
+//        builder.setView(inputPort);
+//
+//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                String host = inputHost.getText().toString();
+//                int port = Integer.parseInt(inputPort.getText().toString());
+//                setProxy(host, port);
+//            }
+//        });
+//
+//        builder.show();
+//    }
+
+    private void setProxy(String host, int port) {
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Handle the case where the user hasn't granted the location permission.
+            // You may choose to request the permission or display a message to the user.
+            return;
+        }
+
+        List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
+
+        for (WifiConfiguration config : configuredNetworks) {
+            if (config.BSSID.equals(wifiInfo.getBSSID())) {
+                try {
+                    Class<?> proxyInfoClass = Class.forName("android.net.ProxyInfo");
+                    Constructor<?> constructor = proxyInfoClass.getConstructor(String.class, int.class, String.class);
+                    Object proxyInfo = constructor.newInstance(host, port, null);
+
+                    Method setHttpProxy = WifiConfiguration.class.getDeclaredMethod("setHttpProxy", proxyInfoClass);
+                    setHttpProxy.invoke(config, proxyInfo);
+
+                    Method save = wifiManager.getClass().getMethod("saveConfiguration");
+                    save.invoke(wifiManager);
+
+                    wifiManager.disconnect();
+                    wifiManager.reconnect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }
+    }
+
+
 }
