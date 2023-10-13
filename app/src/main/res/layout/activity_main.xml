@@ -13,7 +13,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SSID:"
-        android:textSize="15dp"
         android:layout_margin="10dp"/>
 
     <TextView
@@ -21,7 +20,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="BSSID:"
-        android:textSize="15dp"
         android:layout_margin="10dp"/>
 
     <TextView
@@ -29,7 +27,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Signal Strength:"
-        android:textSize="15dp"
         android:layout_margin="10dp"/>
 
     <TextView
@@ -37,7 +34,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Security Type:"
-        android:textSize="15dp"
         android:layout_margin="10dp"/>
 
     <TextView
@@ -45,7 +41,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Proxy Details:"
-        android:textSize="15dp"
         android:layout_margin="10dp"/>
+    <TextView
+        android:id="@+id/root_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Root access: Unknown"
+        android:layout_margin="10dp"/>
+
+    <EditText
+        android:id="@+id/proxy_host"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Proxy Host"
+        android:layout_margin="10dp"/>
+
+    <EditText
+        android:id="@+id/proxy_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="Proxy Port"
+        android:layout_margin="10dp"/>
+
+    <Button
+        android:id="@+id/set_proxy_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="#3F51B5"
+        android:text="Set Proxy"
+        app:iconTint="#3F51B5" />
 
 </LinearLayout>
