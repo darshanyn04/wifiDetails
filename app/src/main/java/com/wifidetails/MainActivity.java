@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.ProxyInfo;
+import android.net.VpnService;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
@@ -15,6 +16,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -43,6 +45,16 @@ public class MainActivity extends AppCompatActivity {
         boolean hasRoot = hasRootAccess();
         rootStatusTextView.setText("Root access: " + (hasRoot ? "Yes" : "No"));
 
+        if (isVpnActive()) {
+            TextView vpnStatusTextView = findViewById(R.id.vpn_status);
+            vpnStatusTextView.setText("VPN Status: true");
+            showVpnActiveDialog();
+            return; // Skip the rest of the code
+        } else {
+            TextView vpnStatusTextView = findViewById(R.id.vpn_status);
+            vpnStatusTextView.setText("VPN Status: false");
+        }
+
 
         // Check and request location permission if not granted
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -52,6 +64,34 @@ public class MainActivity extends AppCompatActivity {
             getWiFiDetails();
         }
 //        askForProxySettings();
+    }
+    private boolean isVpnActive() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network[] networks = cm.getAllNetworks();
+
+        for (Network network : networks) {
+            NetworkCapabilities capabilities = cm.getNetworkCapabilities(network);
+
+            if (capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void showVpnActiveDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("VPN Active");
+        builder.setMessage("A VPN connection is active. Please disconnect the VPN to proceed.");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Close the app or take appropriate action
+                finish();
+            }
+        });
+        builder.show();
     }
 
     private void getWiFiDetails() {
