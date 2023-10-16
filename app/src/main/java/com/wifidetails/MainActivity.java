@@ -8,27 +8,24 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.ProxyInfo;
-import android.net.VpnService;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.List;
+import androidx.appcompat.app.AlertDialog;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,6 +61,25 @@ public class MainActivity extends AppCompatActivity {
             getWiFiDetails();
         }
 //        askForProxySettings();
+        Button setProxyButton = findViewById(R.id.set_proxy_button);
+        setProxyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText hostEditText = findViewById(R.id.proxy_host);
+                EditText portEditText = findViewById(R.id.proxy_port);
+
+                String host = hostEditText.getText().toString();
+                String portString = portEditText.getText().toString();
+
+                if (!host.isEmpty() && !portString.isEmpty()) {
+                    int port = Integer.parseInt(portString);
+                    setProxy(host, port);
+                } else {
+                    Toast.makeText(MainActivity.this, "Please enter proxy details", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
     private boolean isVpnActive() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -93,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         });
         builder.show();
     }
+
 
     private void getWiFiDetails() {
         // Get the WiFi details
@@ -265,13 +282,16 @@ public class MainActivity extends AppCompatActivity {
 
                     wifiManager.disconnect();
                     wifiManager.reconnect();
+                    Toast.makeText(MainActivity.this, "Proxy set successfully", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "Error setting proxy: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
         }
     }
+
 
 
 }

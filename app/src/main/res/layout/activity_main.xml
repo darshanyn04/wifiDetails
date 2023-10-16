@@ -55,5 +55,24 @@
         android:layout_height="wrap_content"
         android:text="VPN Status: Unknown"
         android:layout_margin="10dp"/>
+    <EditText
+        android:id="@+id/proxy_host"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Proxy Host" />
+
+    <EditText
+        android:id="@+id/proxy_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="Proxy Port" />
+
+    <Button
+        android:id="@+id/set_proxy_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Proxy" />
+
 
 </LinearLayout>
