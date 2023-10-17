@@ -3,6 +3,7 @@ package com.wifidetails;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -13,20 +14,21 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.List;
+import androidx.appcompat.app.AlertDialog;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +44,25 @@ public class MainActivity extends AppCompatActivity {
         rootStatusTextView = findViewById(R.id.root_status);
         boolean hasRoot = hasRootAccess();
         rootStatusTextView.setText("Root access: " + (hasRoot ? "Yes" : "No"));
+        Button openWifiSettingsButton = findViewById(R.id.open_wifi_settings_button);
+
+        openWifiSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                startActivity(intent);
+            }
+        });
+
+        if (isVpnActive()) {
+            TextView vpnStatusTextView = findViewById(R.id.vpn_status);
+            vpnStatusTextView.setText("VPN Status: true");
+            showVpnActiveDialog();
+            return; // Skip the rest of the code
+        } else {
+            TextView vpnStatusTextView = findViewById(R.id.vpn_status);
+            vpnStatusTextView.setText("VPN Status: false");
+        }
 
 
         // Check and request location permission if not granted
@@ -52,7 +73,55 @@ public class MainActivity extends AppCompatActivity {
             getWiFiDetails();
         }
 //        askForProxySettings();
+        Button setProxyButton = findViewById(R.id.set_proxy_button);
+        setProxyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText hostEditText = findViewById(R.id.proxy_host);
+                EditText portEditText = findViewById(R.id.proxy_port);
+
+                String host = hostEditText.getText().toString();
+                String portString = portEditText.getText().toString();
+
+                if (!host.isEmpty() && !portString.isEmpty()) {
+                    int port = Integer.parseInt(portString);
+                    setProxy(host, port);
+                } else {
+                    Toast.makeText(MainActivity.this, "Please enter proxy details", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
+    private boolean isVpnActive() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network[] networks = cm.getAllNetworks();
+
+        for (Network network : networks) {
+            NetworkCapabilities capabilities = cm.getNetworkCapabilities(network);
+
+            if (capabilities != null && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void showVpnActiveDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("VPN Active");
+        builder.setMessage("A VPN connection is active. Please disconnect the VPN to proceed.");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Close the app or take appropriate action
+                finish();
+            }
+        });
+        builder.show();
+    }
+
 
     private void getWiFiDetails() {
         // Get the WiFi details
@@ -211,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
         List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
 
         for (WifiConfiguration config : configuredNetworks) {
+            Log.d("BSSID", config.BSSID); // Add this line for debugging
             if (config.BSSID.equals(wifiInfo.getBSSID())) {
                 try {
                     Class<?> proxyInfoClass = Class.forName("android.net.ProxyInfo");
@@ -225,13 +295,22 @@ public class MainActivity extends AppCompatActivity {
 
                     wifiManager.disconnect();
                     wifiManager.reconnect();
+                    Toast.makeText(MainActivity.this, "Proxy set successfully", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "Error setting proxy: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                break;
+                return; // Add a return statement after setting the proxy
             }
         }
+
+        // Add a message if no matching network is found
+        Toast.makeText(MainActivity.this, "No matching network found", Toast.LENGTH_SHORT).show();
     }
+
+
+
+
 
 
 }
