@@ -7,6 +7,14 @@
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/wifiDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WiFi Details:"
+        android:layout_margin="5dp"
+        android:textStyle="bold"
+        android:textSize="20dp"/>
 
     <TextView
         android:id="@+id/ssid"
@@ -43,11 +51,27 @@
         android:text="Proxy Details:"
         android:layout_margin="10dp"/>
     <TextView
+        android:id="@+id/rootCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Root Access"
+        android:layout_margin="5dp"
+        android:textStyle="bold"
+        android:textSize="20dp"/>
+    <TextView
         android:id="@+id/root_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Root access: Unknown"
         android:layout_margin="10dp"/>
+    <TextView
+        android:id="@+id/vpnStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="VPN Status"
+        android:layout_margin="5dp"
+        android:textStyle="bold"
+        android:textSize="20dp"/>
 
     <TextView
         android:id="@+id/vpn_status"
@@ -55,6 +79,15 @@
         android:layout_height="wrap_content"
         android:text="VPN Status: Unknown"
         android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/setProxy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Proxy For Rooted Phone"
+        android:layout_margin="5dp"
+        android:textStyle="bold"
+        android:textSize="20dp"/>
     <EditText
         android:id="@+id/proxy_host"
         android:layout_width="match_parent"
@@ -73,6 +106,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Set Proxy" />
+    <TextView
+        android:id="@+id/navigateToWifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Navigate to Wifi Screeen"
+        android:layout_margin="5dp"
+        android:textStyle="bold"
+        android:textSize="20dp"/>
+    <Button
+        android:id="@+id/open_wifi_settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Wi-Fi Settings" />
 
 
 </LinearLayout>

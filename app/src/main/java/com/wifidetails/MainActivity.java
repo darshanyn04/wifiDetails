@@ -3,6 +3,7 @@ package com.wifidetails;
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -13,6 +14,8 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,6 +44,15 @@ public class MainActivity extends AppCompatActivity {
         rootStatusTextView = findViewById(R.id.root_status);
         boolean hasRoot = hasRootAccess();
         rootStatusTextView.setText("Root access: " + (hasRoot ? "Yes" : "No"));
+        Button openWifiSettingsButton = findViewById(R.id.open_wifi_settings_button);
+
+        openWifiSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                startActivity(intent);
+            }
+        });
 
         if (isVpnActive()) {
             TextView vpnStatusTextView = findViewById(R.id.vpn_status);
@@ -268,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
         List<WifiConfiguration> configuredNetworks = wifiManager.getConfiguredNetworks();
 
         for (WifiConfiguration config : configuredNetworks) {
+            Log.d("BSSID", config.BSSID); // Add this line for debugging
             if (config.BSSID.equals(wifiInfo.getBSSID())) {
                 try {
                     Class<?> proxyInfoClass = Class.forName("android.net.ProxyInfo");
@@ -287,10 +300,16 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                     Toast.makeText(MainActivity.this, "Error setting proxy: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                break;
+                return; // Add a return statement after setting the proxy
             }
         }
+
+        // Add a message if no matching network is found
+        Toast.makeText(MainActivity.this, "No matching network found", Toast.LENGTH_SHORT).show();
     }
+
+
+
 
 
 
