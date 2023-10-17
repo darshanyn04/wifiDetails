@@ -54,7 +54,7 @@
         android:id="@+id/rootCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Root Access"
+        android:text="Root Access:"
         android:layout_margin="5dp"
         android:textStyle="bold"
         android:textSize="20dp"/>
@@ -84,22 +84,22 @@
         android:id="@+id/setProxy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set Proxy For Rooted Phone"
+        android:text="Set Proxy For Rooted Phone:"
         android:layout_margin="5dp"
         android:textStyle="bold"
         android:textSize="20dp"/>
     <EditText
         android:id="@+id/proxy_host"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Proxy Host" />
+        android:layout_height="50dp"
+        android:hint="Proxy Host"/>
 
     <EditText
         android:id="@+id/proxy_port"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:inputType="number"
-        android:hint="Proxy Port" />
+        android:hint="Proxy Port"/>
 
     <Button
         android:id="@+id/set_proxy_button"
@@ -107,13 +107,14 @@
         android:layout_height="wrap_content"
         android:text="Set Proxy" />
     <TextView
-        android:id="@+id/navigateToWifi"
+        android:id="@+id/navigateToWifiScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Navigate to Wifi Screeen"
+        android:text="Navigate to WiFi Setting Page:"
         android:layout_margin="5dp"
         android:textStyle="bold"
         android:textSize="20dp"/>
+
     <Button
         android:id="@+id/open_wifi_settings_button"
         android:layout_width="wrap_content"
